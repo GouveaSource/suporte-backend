@@ -31,5 +31,17 @@ export class PatioController {
     } catch (error) {
       return res.status(400).json({ error: 'Não foi possível criar o pátio.' });
     }
+
+  }
+
+  async list(req: Request, res: Response) {
+    try {
+      const patios = await prismaClient.patio.findMany();
+
+      return res.status(200).json(patios);
+    } catch (error) {
+      return res.status(400).json({ error: 'Não foi possível listar os pátios.' });
+    }
   }
 }
+

@@ -14,6 +14,7 @@ routes.post('/users', userController.create);
 
 // Rotas de Patio
 routes.post('/patios', patioController.create);
+routes.get('/patios', patioController.list);
 
 // Rotas de Driver
 routes.post('/drivers', driverController.create);
