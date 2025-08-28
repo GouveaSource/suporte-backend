@@ -1,10 +1,22 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/UserController';
+import { PatioController } from '../controllers/PatioController'; // Importamos
+import { DriverController } from '../controllers/DriverController'; // Importamos
 
 const routes = Router();
-const userController = new UserController();
 
-// Quando uma requisição POST chegar em /users, ela chama o método 'create' do nosso UserController
+// Instanciamos os controllers
+const userController = new UserController();
+const patioController = new PatioController();
+const driverController = new DriverController();
+
+// Rotas de User
 routes.post('/users', userController.create);
+
+// Rotas de Patio
+routes.post('/patios', patioController.create); 
+
+// Rotas de Driver
+routes.post('/drivers', driverController.create); 
 
 export default routes;
