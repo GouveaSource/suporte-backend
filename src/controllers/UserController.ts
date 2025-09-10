@@ -16,11 +16,9 @@ export class UserController {
 
       return res.status(201).json(user);
     } catch (error) {
-      return res
-        .status(400)
-        .json({
-          error: 'Não foi possível criar o usuário. Verifique os dados.',
-        });
+      return res.status(400).json({
+        error: 'Não foi possível criar o usuário. Verifique os dados.',
+      });
     }
   }
 }
