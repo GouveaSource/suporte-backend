@@ -46,12 +46,30 @@ export class PatioController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { name, address, cep, managerName } = req.body;
+    const { 
+      name,
+      address,
+      cep,
+      referencePoint,
+      mapUrl,
+      phone,
+      ramal,
+      managerName, 
+    } = req.body;
 
     try {
       const patio = await prismaClient.patio.update({
         where: { id },
-        data: { name, address, cep, managerName },
+        data: { 
+          name,
+          address,
+          cep,
+          referencePoint,
+          mapUrl,
+          phone,
+          ramal,
+          managerName,
+        },
       });
       return res.status(200).json(patio);
     } catch (error) {
