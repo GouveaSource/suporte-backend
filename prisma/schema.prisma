@@ -1,15 +1,12 @@
-// Define o gerador do Prisma Client, que usaremos para fazer queries no nosso código.
 generator client {
   provider = "prisma-client-js"
 }
 
-// Configura a fonte de dados.
 datasource db {
   provider = "postgresql" // Informa que estamos usando PostgreSQL.
   url      = env("DATABASE_URL") // Pede para ele pegar a URL de conexão do arquivo .env.
 }
 
-// Nosso primeiro modelo de dados. Isso será transformado na tabela "User" no banco.
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -19,8 +16,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-// Adicione estes modelos no final do arquivo
 
 model Patio {
   id              String    @id @default(uuid())
@@ -47,6 +42,17 @@ model Driver {
   phone     String
 
   patios     Patio[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Setor {
+  id            String    @id @default(uuid())
+  name          String    @unique 
+  phone         String    
+  ramal         String?
+  responsible   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
