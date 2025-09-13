@@ -7,11 +7,17 @@ datasource db {
   url      = env("DATABASE_URL") // Pede para ele pegar a URL de conexão do arquivo .env.
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
   password  String
+  role      Role     @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
