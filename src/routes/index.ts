@@ -5,6 +5,7 @@ import { DriverController } from '../controllers/DriverController';
 import { SetorController } from '../controllers/SetorController';
 import { AuthController } from '../controllers/AuthController';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import { adminOnly } from '../middlewares/adminOnly';
 
 const routes = Router();
 
@@ -21,18 +22,18 @@ routes.post('/users', userController.create);
 routes.post('/login', authController.login);
 
 // Rotas de Patio
-routes.post('/patios', authMiddleware, patioController.create);
+routes.post('/patios', authMiddleware, adminOnly, patioController.create);
 routes.get('/patios', authMiddleware, patioController.list);
-routes.put('/patios/:id', authMiddleware, patioController.update);
-routes.delete('/patios/:id', authMiddleware, patioController.delete);
+routes.put('/patios/:id', authMiddleware, adminOnly, patioController.update);
+routes.delete('/patios/:id', authMiddleware, adminOnly, patioController.delete);
 
 // Rotas de Driver
-routes.post('/drivers', authMiddleware, driverController.create);
+routes.post('/drivers', authMiddleware, adminOnly, driverController.create);
 
 // Rotas de Setores
-routes.post('/setores', authMiddleware, setorController.create);
+routes.post('/setores', authMiddleware, adminOnly, setorController.create);
 routes.get('/setores', authMiddleware, setorController.list);
-routes.put('/setores/:id', authMiddleware, setorController.update);
-routes.delete('/setores/:id', authMiddleware, setorController.delete);
+routes.put('/setores/:id', authMiddleware, adminOnly, setorController.update);
+routes.delete('/setores/:id', authMiddleware, adminOnly, setorController.delete);
 
 export default routes;
