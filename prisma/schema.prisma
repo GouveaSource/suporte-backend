@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "postgresql" // Informa que estamos usando PostgreSQL.
   url      = env("DATABASE_URL") // Pede para ele pegar a URL de conexão do arquivo .env.
@@ -34,8 +38,8 @@ model Patio {
   ramal           String?
   managerName     String?
 
-  // Relação: Um Pátio pode ter vários Motoristas
   drivers         Driver[]
+  cidades         Cidade[]
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -47,10 +51,11 @@ model Driver {
   cpf       String   @unique
   phone     String
 
-  patios     Patio[] 
+  patios      Patio[] 
+  reboques    Reboque[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Setor {
@@ -60,6 +65,45 @@ model Setor {
   ramal         String?
   responsible   String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Reboque {
+  id            String  @id @default(uuid())
+  placa         String  @unique
+  modelo        String
+  marca         String
+  ano           Int
+
+  driver        Driver  @relation(fields: [driverId], references: [id])
+  driverId      String
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Cidade {
+  id            String  @id @default(uuid())
+  nome          String
+  estado        String
+
+  patio           Patio[]
+  orgaoApreensao  orgaosApreensao[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([nome, estado])
+}
+
+model orgaosApreensao {
+  id            String  @id @default(uuid())
+  name          String  @unique
+
+  cidades       Cidade @relation(fields: [cidadeId], references: [id])
+  cidadeId      String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
