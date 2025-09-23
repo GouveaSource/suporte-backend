@@ -38,11 +38,15 @@ routes.delete('/empresas/:id', authMiddleware, can('empresa:delete'), empresaCon
 // Motoristas (Drivers)
 routes.post('/drivers', authMiddleware, can('driver:create'), driverController.create);
 routes.get('/drivers', authMiddleware, can('driver:read'), driverController.list);
+routes.get('/drivers/:id', authMiddleware, can('driver:read'), driverController.getById);
+routes.put('/drivers/:id', authMiddleware, can('driver:update'), driverController.update);
+routes.delete('/drivers/:id', authMiddleware, can('driver:delete'), driverController.delete);
 
 
 // Patios
 routes.post('/patios', authMiddleware, can('patio:create'), patioController.create);
 routes.get('/patios', authMiddleware, can('patio:read'), patioController.list);
+routes.get('/patios/:id', authMiddleware, can('patio:read'), patioController.getById);
 routes.put('/patios/:id', authMiddleware, can('patio:update'), patioController.update);
 routes.delete('/patios/:id', authMiddleware, can('patio:delete'), patioController.delete);
 
