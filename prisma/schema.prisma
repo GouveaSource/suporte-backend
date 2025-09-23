@@ -1,3 +1,5 @@
+// prisma/schema.prisma (VERSÃO CORRIGIDA COMPLETA)
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,42 +9,45 @@ generator erd {
 }
 
 datasource db {
-  provider = "postgresql" // Informa que estamos usando PostgreSQL.
-  url      = env("DATABASE_URL") // Pede para ele pegar a URL de conexão do arquivo .env.
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
+// Modelos de Autenticação e Permissão
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
   password  String
-  role      Role     @default(USER)
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId String
+
+  permissions Permission[] @relation()
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Patio {
-  id              String    @id @default(uuid())
-  name            String    @unique
-  address         String
-  cep             String
-  referencePoint  String?   
-  mapUrl          String?
-  phone           String?
-  ramal           String?
-  managerName     String?
+model Permission {
+  id      String @id @default(uuid())
+  name    String @unique
+  users   User[] @relation()
 
-  drivers         Driver[]
-  cidades         Cidade[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+// Modelos de Negócio
+model Empresa {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  
+  users     User[]    // Relação de volta para User
+  drivers   Driver[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Driver {
@@ -51,11 +56,80 @@ model Driver {
   cpf       String   @unique
   phone     String
 
-  patios      Patio[] 
-  reboques    Reboque[]
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId String
+
+  patio     Patio?   @relation(fields: [patioId], references: [id])
+  patioId   String?
+
+  reboques  Reboque[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+enum TipoReboque {
+  LEVE
+  PESADO
+}
+
+model Reboque {
+  id            String      @id @default(uuid())
+  placa         String      @unique
+  marcaModelo   String
+  tipo          TipoReboque
+
+  driver        Driver  @relation(fields: [driverId], references: [id])
+  driverId      String
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Patio {
+  id              String    @id @default(uuid())
+  name            String    @unique
+  address         String
+  cep             String
+  referencePoint  String?
+  mapUrl          String?
+  phone           String?
+  ramal           String?
+  managerName     String?
+  
+  drivers         Driver[]
+  cidades         Cidade[] @relation()
+  orgaos          OrgaosApreensao[] @relation()
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Cidade {
+  id            String  @id @default(uuid())
+  nome          String
+  estado        String
+
+  patios          Patio[] @relation()
+  orgaosApreensao OrgaosApreensao[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([nome, estado])
+}
+
+model OrgaosApreensao {
+  id            String  @id @default(uuid())
+  name          String  @unique
+
+  cidade        Cidade @relation(fields: [cidadeId], references: [id])
+  cidadeId      String
+
+  patios        Patio[] @relation()
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Setor {
@@ -67,43 +141,4 @@ model Setor {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-}
-
-model Reboque {
-  id            String  @id @default(uuid())
-  placa         String  @unique
-  modelo        String
-  marca         String
-  ano           Int
-
-  driver        Driver  @relation(fields: [driverId], references: [id])
-  driverId      String
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
-model Cidade {
-  id            String  @id @default(uuid())
-  nome          String
-  estado        String
-
-  patio           Patio[]
-  orgaoApreensao  orgaosApreensao[]
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@unique([nome, estado])
-}
-
-model orgaosApreensao {
-  id            String  @id @default(uuid())
-  name          String  @unique
-
-  cidades       Cidade @relation(fields: [cidadeId], references: [id])
-  cidadeId      String
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
 }

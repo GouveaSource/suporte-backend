@@ -3,12 +3,12 @@ import prismaClient from '../database/prismaClient';
 
 export class DriverController {
   async create(req: Request, res: Response) {
-    const { name, cpf, phone, patioIds } = req.body;
+    const { name, cpf, phone, empresaId, patioId } = req.body;
 
-    if (!patioIds || !Array.isArray(patioIds) || patioIds.length === 0) {
-      return res.status(400).json({
-        error: 'É necessário fornecer um array de IDs de pátios (patioIds).',
-      });
+    if (!empresaId) {
+      return res
+        .status(400)
+        .json({ error: 'O ID da empresa (empresaId) é obrigatório.' });
     }
 
     try {
@@ -17,12 +17,12 @@ export class DriverController {
           name,
           cpf,
           phone,
-          patios: {
-            connect: patioIds.map((id) => ({ id })),
-          },
+          empresaId: empresaId,
+          ...(patioId && { patio: { connect: { id: patioId } } }),
         },
         include: {
-          patios: true,
+          empresa: true,
+          patio: true,
         },
       });
       return res.status(201).json(driver);
@@ -31,6 +31,22 @@ export class DriverController {
       return res
         .status(400)
         .json({ error: 'Não foi possível criar o motorista.' });
+    }
+  }
+
+  async list(req: Request, res: Response) {
+    try {
+      const drivers = await prismaClient.driver.findMany({
+        include: {
+          empresa: true,
+          patio: true,
+        },
+      });
+      return res.status(200).json(drivers);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: 'Não foi possível listar os motoristas.' });
     }
   }
 }

@@ -4,6 +4,9 @@ import { PatioController } from '../controllers/PatioController';
 import { DriverController } from '../controllers/DriverController';
 import { SetorController } from '../controllers/SetorController';
 import { AuthController } from '../controllers/AuthController';
+import { CidadeController } from '../controllers/CidadeController';
+import { ReboqueController } from '../controllers/ReboqueController';
+import { OrgaoApreensaoController } from '../controllers/OrgaoController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { adminOnly } from '../middlewares/adminOnly';
 
@@ -14,6 +17,9 @@ const patioController = new PatioController();
 const driverController = new DriverController();
 const setorController = new SetorController();
 const authController = new AuthController();
+const cidadeController = new CidadeController();
+const reboqueController = new ReboqueController();
+const orgaoApreensaoController = new OrgaoApreensaoController();
 
 // Rotas de User
 routes.post('/users', userController.create);
@@ -35,5 +41,18 @@ routes.post('/setores', authMiddleware, adminOnly, setorController.create);
 routes.get('/setores', authMiddleware, setorController.list);
 routes.put('/setores/:id', authMiddleware, adminOnly, setorController.update);
 routes.delete('/setores/:id', authMiddleware, adminOnly, setorController.delete);
+
+// Rotas de Cidades
+routes.post('/cidades', authMiddleware, adminOnly, cidadeController.create);
+routes.get('/cidades', authMiddleware, cidadeController.list);
+
+//Rotas de Reboques
+// Rotas de Reboque
+routes.post('/reboques', authMiddleware, adminOnly, reboqueController.create);
+routes.get('/reboques', authMiddleware, reboqueController.list);
+
+// Rotas de Órgão de Apreensão
+routes.post('/orgaos', authMiddleware, adminOnly, orgaoApreensaoController.create);
+routes.get('/orgaos', authMiddleware, orgaoApreensaoController.list);
 
 export default routes;
