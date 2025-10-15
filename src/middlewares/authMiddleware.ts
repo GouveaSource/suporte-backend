@@ -5,7 +5,7 @@ interface TokenPayload {
     id: string;
     name: string;
     email: string;
-    role: string;
+    permissions: string[];
     iat: number;
     exp: number;
     sub: string;
@@ -26,13 +26,12 @@ export function authMiddleware(
 
     try {
         const decoded = verify(token, process.env.JWT_SECRET || 'default_secret');
-        const { id, name, email, role } = decoded as TokenPayload;
+        const { id, name, email, permissions } = decoded as TokenPayload;
 
         // @ts-ignore
+        req.user = { id, name, email, permissions };
 
-        req.user = { id, name, email, role };
-
-        return next(); // Se o token for válido, permite que a requisição continue
+        return next();
     } catch (error) {
         return res.status(401).json({ error: 'Token inválido.' });
     }

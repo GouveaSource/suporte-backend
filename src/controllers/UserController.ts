@@ -7,34 +7,23 @@ export class UserController {
     const { name, email, password } = req.body;
 
     try {
-      const newUser = await prismaClient.$transaction(async (prisma) => {
-        const newEmpresa = await prisma.empresa.create({
-          data: {
-            name: name,
-          },
-        });
+      const hashedPassword = await hash(password, 8);
 
-        const hashedPassword = await hash(password, 8);
-
-        const user = await prisma.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-            empresaId: newEmpresa.id,
-          },
-        });
-
-        return user;
+      const user = await prismaClient.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+        },
       });
 
-      const { password: _, ...userWithoutPassword } = newUser;
+      const { password: _, ...userWithoutPassword } = user;
 
       return res.status(201).json(userWithoutPassword);
     } catch (error) {
       console.error(error);
       return res.status(400).json({
-        error: 'Não foi possível criar o usuário. Verifique se o e-mail ou nome da empresa já existem.',
+        error: 'Não foi possível criar o usuário. Verifique se o e-mail já existe.',
       });
     }
   }

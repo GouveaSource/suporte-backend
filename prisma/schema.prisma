@@ -1,12 +1,14 @@
-// prisma/schema.prisma (VERSÃO CORRIGIDA COMPLETA)
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
 }
 
+/*
 generator erd {
   provider = "prisma-erd-generator"
 }
+*/
 
 datasource db {
   provider = "postgresql"
@@ -20,8 +22,8 @@ model User {
   name      String?
   password  String
 
-  empresa   Empresa @relation(fields: [empresaId], references: [id])
-  empresaId String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId String?
 
   permissions Permission[] @relation()
 
